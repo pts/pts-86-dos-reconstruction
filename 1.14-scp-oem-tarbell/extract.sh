@@ -94,6 +94,29 @@ echo "
 %define SSS 9  ; Sector size shift.
 %ifdef X  ; Extract a contiguous file from the FAT12 filesystem.
   incbin F86DOS114IMG, DELTA+((X)<<SSS), S  ; \`nasm -DX=start_cluster -DS=file_size'.
+%elifdef FSJUNK_DAT  ; Extract junk bytes after various files within 86dos114.img. 86dos114.nasm will copy them to the image it builds.
+  incbin F86DOS114IMG, 0x3f2e, 0x52
+  incbin F86DOS114IMG, 0x4bc9, 0x37
+  incbin F86DOS114IMG, 0x6199, 0x67
+  incbin F86DOS114IMG, 0x81f0, 0x10
+  incbin F86DOS114IMG, 0x83d4, 0x2c
+  incbin F86DOS114IMG, 0x84f1, 0x0f
+  incbin F86DOS114IMG, 0x872f, 0x51
+  incbin F86DOS114IMG, 0x96b5, 0x4b
+  incbin F86DOS114IMG, 0x9d1e, 0x62
+  incbin F86DOS114IMG, 0x9f2f, 0x51
+  incbin F86DOS114IMG, 0xac12, 0x6e
+  incbin F86DOS114IMG, 0xafe3, 0x1d
+  incbin F86DOS114IMG, 0xb27f, 0x01
+  incbin F86DOS114IMG, 0xe76e, 0x12
+  incbin F86DOS114IMG, 0x1764b, 0x35
+  incbin F86DOS114IMG, 0x20317, 0x69
+  incbin F86DOS114IMG, 0x20830, 0x50
+  incbin F86DOS114IMG, 0x21429, 0x57
+  incbin F86DOS114IMG, 0x21f7e, 0x2
+  incbin F86DOS114IMG, 0x23400, 0x1600
+  incbin F86DOS114IMG, 0x24b45, 0x3b
+  incbin F86DOS114IMG, 0x24c00, 0x7880
 %elifdef READTHIS_DOC  ; The single noncontiguous file on this FAT12 filesystem.
   incbin F86DOS114IMG, DELTA+(0xfe<<SSS), 10<<SSS
   incbin F86DOS114IMG, DELTA+(0x113<<SSS), 0x1545-(10<<SSS)
@@ -123,8 +146,8 @@ nasm -O0 -o mon.asm.orig      -DX=0xaa  -DS=0x8b17 extract.nasm
 nasm -O0 -o cpmtab.asm.orig   -DX=0xf0  -DS=0x0430 extract.nasm
 nasm -O0 -o boot.asm.orig     -DX=0xf3  -DS=0x0a29 extract.nasm
 nasm -O0 -o news.doc.orig     -DX=0xf9  -DS=0x097e extract.nasm
-nasm -O0 -o fjunk1.dat.orig   -DX=0x108 -DS=0x1600 extract.nasm
 nasm -O0 -o readthis.doc.orig -DREADTHIS_DOC       extract.nasm
+nasm -O0 -o fsjunk.dat.orig   -DFSJUNK_DAT         extract.nasm
 rm -f extract.nasm
 
 touch -d '1981-08-26 12:00:00 GMT' boot.com.orig  # Use the date of boot.asm.orig.
