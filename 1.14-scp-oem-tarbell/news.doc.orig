@@ -1,0 +1,49 @@
+The documentation for this release of 86-DOS is not complete yet, we
+have enclosed the documentation for version 1.0 and a few sheets
+explaining new features which are necessary to know to use the system.
+We hope to make a new addendum which will replace the 1.0 addendum and
+all the loose sheet in a couple of weeks.  Microsoft has purchased
+86-DOS from us and now owns all the rights to it including the
+responsibility to document it.  When the final manuals from Microsoft
+are available you will get copies.
+
+The file CPMTAB.ASM is the source file for the tables used by RDCPM and
+is provided as an example of how new tables may be prepared. These
+tables allow reading 8" or 5" single-density CP/M disks. If new tables
+are desired for reading disks of a different CP/M 2 format, follow 
+these steps:
+
+	1. Prepare a source file of the new tables (see MAKRDCPM in
+	   manual).
+
+	2. Assemble the new tables.
+
+	3. Convert the new tables to binary with HEX2BIN.
+
+	4. Run MAKRDCPM.
+
+
+The files INIT.ASM and INIT.COM are the source and object code for a
+disk initialization routine. Any raw or blown disk may be formatted
+by this routine to an empty disk with the soft-sector information
+necessary for your controller. Note that CLEAR must be run after
+formatting to use the disk with 86-DOS. The program prints a warning
+message and asks which drive to format before initializing begins.
+
+An important note about RDCPM and INIT:
+
+These two programs bypass the operating system and either use the I/O
+system (in the case of RDCPM) or talk directly to the disk controller
+(in the case of INIT) to access the disk.  Therefore, if the I/O system
+is changed so that the number and arrangment of drives is different,
+RDCPM and INIT may have to be changed so that they respect the new
+drive configuration.  The disk selections in INIT.ASM are very similar
+to those in DOSIO.ASM, so if you change one, make appropriate changes
+in the other.  Since INIT moves the disk drive heads around without the
+knowledge of the I/O system, after initializing disks the heads will
+probably be on a different track than the I/O system thinks they should
+be on.  This usually results in a long delay in accessing any drive
+used after a disk has been initialized on it because the I/O system
+must decide it doesn't know where the head is, restore it to track
+zero, and put it back where it's supposed to be.
+
