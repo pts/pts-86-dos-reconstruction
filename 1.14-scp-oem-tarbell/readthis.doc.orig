@@ -1,0 +1,98 @@
+                          Addendum for 86-DOS 1.1
+
+This disk contains 86-DOS version 1.1 which is necessary to run the Microsoft
+high-level language compiler or MACRO-86 assembler which you have purchased.
+It also contains the newer versions of the system utilities which go with
+86-DOS 1.1.  Sometime in December SCP will begin distribution of an even later
+version of 86-DOS which will be fully documented and include all the features
+of Microsoft's MS-DOS, IBM's Personal Computer DOS, and Lifeboat's SB-86.  The
+later version will be available for a service charge (probably $25.00).
+
+Differences between 86-DOS version 1.0 and 86-DOS version 1.1 (included on this
+disk),  which the user must know about in order to use the new software:
+
+	* 86-DOS no longer fits on the space reserved at the beginning of the
+	  disk.  86-DOS resides in an invisible file which is always the first
+	  file on the disk.  The boot sequence is now as follows:
+
+	  1> the boot ROM loads the first sector from the disk and jumps to the
+	     code loaded from that sector.
+	  2> the code from the first sector loads in the I/O system which
+	     follows the first sector in the reserved area and is typically
+	     eight 128-byte sectors in length.  A jump is made to the
+	     initialization program in the I/O system.
+	  3> the initialization program in the I/O system uses the disk read
+	     function of the I/O system to load 86-DOS from the invisible file.
+	  4> the initialization code then uses 86-DOS to load in the command
+	     interpreter, COMMAND.COM, from the disk and then jumps to it.
+
+	* The SYS utility which copys 86-DOS from one disk to another also
+	  copies the invisible file, 86DOS.SYS, which contains 86-DOS.  Because
+	  this file must be the first file on the disk (so the I/O system can
+	  find it when 86-DOS is booted up), SYS can only transfer the
+	  operating system to a disk which is freshly CLEARed or already has a
+	  file (invisible or not) called 86DOS.SYS which is large enough to
+	  hold 86-DOS.
+
+	* The CHKDSK utility prints the total number of files on the disk
+	  including invisible files.  This allows the user to check for the
+	  presence of invisible files such as 86DOS.SYS since the total number
+	  of files reported by CHKDSK will be greater that that reported by the
+	  DIR command.  Note:  be sure to use this new version of CHKDSK with
+	  86-DOS version 1.1 because old versions of CHKDSK run under 86-DOS
+	  version 1.1 can't "see" the invisible files and will free the disk
+	  space allocated to these files thus destroying them.
+
+	* The COMMAND interpreter (COMMAND.COM) can now load executable machine
+	  language files with the extension .EXE (for EXEcute).  These are
+	  similar to .COM files but have a 512-byte preface which contains
+	  information on how to patch inter-segment jumps and calls within the 
+	  file allowing multiple-segment files to be loaded.
+
+	* DEBUG also can load .EXE files so that they can be debugged.
+
+	* The assembler has had some rather significant features added to it.
+
+	  The expression analyser can now perform multiplication and division
+	  as well as addition and subtraction.  Use "*" to multiply and "/" to
+	  divide.  Multiplications and divisions are performed before additions
+	  and subtractions.  Parentheses may be used to change this normal
+	  order of precedence.
+
+	  Errors messages are sent directly to the console as well as put in
+	  the .PRN print file so that it is not necessary to make a print file
+	  to find out what errors are in the source code.  Two more options
+	  have been added to the third letter of the drive assignment
+	  extention which tells the assembler what to do with the print file.
+
+	  A-O send print file to disk drive A-O
+	  P   send print file directly to printer (tabs are NOT expanded)
+	  X   send print file to console
+	  Y   force a second pass through the source file so that error
+	      messages sent to the console include the text of the source file
+	      line on which the error occured
+	  Z   no print file.  Error messages sent to the console will indicate
+	      what error occured and on which line, but will not include the
+	      text of the line in which the error occured
+
+	  The Z option is normally only used if you are assembling a file which
+	  probably has no errors in it (perhaps you've assembled it before and
+	  know it has no errors), so that incomplete error messages are of no
+	  consequence.  Using the Z option results in faster assembly since the
+	  assembler doesn't have to make a second pass through source file.
+
+	  Line numbers have been added to the print file to make it easier to
+	  find particular lines using the editor.
+
+	  The assembler now handles 8087 opcodes.  Complete documentation on
+	  this feature will be provided with the new release in December.
+
+	* The disk initialization program (INIT.COM) has been changed so that
+	  the drive letters and disk formats correspond to those used by the
+	  operating system.  For example, with the Tarbell double-density
+	  controller there are no longer two different initialization programs
+	  INIT and DINIT for single and double-density disks.  The new INIT
+	  will format a double-density double-sided disk in drives E or F if
+	  if you have double-sided drives.  See the warning about changing
+	  DOSIO and INIT in the file NEWS.DOC.
+
