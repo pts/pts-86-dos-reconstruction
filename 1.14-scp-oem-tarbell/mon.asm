@@ -14,6 +14,9 @@ OTHER:		EQU	1	;User-defined disk
 PUTBASE:EQU	100H
 LOAD:	EQU	200H
 	ORG	7F0H
+	PUT	PUTBASE
+	DB	0
+	ORG	$-1
 	PUT	PUTBASE+7F0H
 	JMP	0,0FF80H	;Power-on jump to monitor
 
