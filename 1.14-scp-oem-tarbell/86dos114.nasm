@@ -216,9 +216,15 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 ; Junk bytes are read from this file unless `nasm -Djunk=pad' is used.
 ;%define JUNKIMG '86dos11t.img'
 %define FSJUNKDAT 'fsjunk.dat.orig'
-SKIPCLA equ 0x108  ; First cluster to skip from being allocated. Skipped region must be within a single file.
-SKIPCLB equ 0x113  ; First cluster after SKIPCLA not to skip anymore. To disable, set SKIPCLA and SKIPCLB to the same value.
-SKIPCLF equ 0xfe  ; This is the file 'readthis.doc.orig'. First cluster of the containing the SKIPCLA...SKIPCLF region. To disable, set it to 0.
+%ifdef NO_SKIP  ; `nasm -DNO_SKIP'
+  SKIPCLA equ 0
+  SKIPCLB equ 0
+  SKIPCLF equ 0
+%else
+  SKIPCLA equ 0x108  ; First cluster to skip from being allocated. Skipped region must be within a single file.
+  SKIPCLB equ 0x113  ; First cluster after SKIPCLA not to skip anymore. To disable, set SKIPCLA and SKIPCLB to the same value.
+  SKIPCLF equ 0xfe  ; This is the file 'readthis.doc.orig'. First cluster of the containing the SKIPCLA...SKIPCLF region. To disable, set it to 0.
+%endif
 fatfs_start 0x1a00, 0x1e2, 0x40, 0x100
 incres 0, 'boot.com', 0x80
 incres 0, 'dosio.com', 0x400
