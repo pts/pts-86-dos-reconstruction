@@ -209,20 +209,20 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 ; ---
 
 ; Junk bytes are read from this file unless `nasm -Djunk=pad' is used.
-%define FSJUNKDAT 'fsjunk.dat.orig'
+%define FSJUNKDAT 'fsjunk.dat'
 fatfs_start 0x1a00, 0x1e4, 0x40, 0x100
 
-incres 0x20, 'boot.com.orig', 0x80  ; Contains junk in the end.
-incres 0x4f, 'dosio.com.orig', 0x300  ; Junk.
+incres 0x20, 'boot.com', 0x80  ; Contains junk in the end.
+incres 0x4f, 'dosio.com', 0x300  ; Junk.
 db_until 0x480, 0
-incbin '86dos.sys.orig'
-incfile 0x54, 'COMMAND COM', 'command.com.orig'
-incfile 0,    'RDCPM   COM', 'rdcpm.com.orig'
-incfile 0,    'HEX2BIN COM', 'hex2bin.com.orig'
-incfile 0x6f, 'ASM     COM', 'asm.com.orig'  
-incfile 0x70, 'TRANS   COM', 'trans.com.orig'
-incfile 0x67, 'SYS     COM', 'sys.com.orig'  
-incfile 0x5,  'EDLIN   COM', 'edlin.com.orig'
-incfile 0x2a, 'CHESS   COM', 'chess.com.orig'
+incbin '86dos.sys'
+incfile 0x54, 'COMMAND COM', 'command.com'
+incfile 0,    'RDCPM   COM', 'rdcpm.com'
+incfile 0,    'HEX2BIN COM', 'hex2bin.com'
+incfile 0x6f, 'ASM     COM', 'asm.com'
+incfile 0x70, 'TRANS   COM', 'trans.com'
+incfile 0x67, 'SYS     COM', 'sys.com'
+incfile 0x5,  'EDLIN   COM', 'edlin.com'
+incfile 0x2a, 'CHESS   COM', 'chess.com'
 incfile 0,    'CHESS   DOC', 'chess.doc.orig'
 fatfs_end
