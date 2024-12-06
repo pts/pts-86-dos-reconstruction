@@ -12,8 +12,10 @@ mv 86dos.bin 86dos.sys
 cmp 86dos.sys 86dos.sys.orig
 ./asm244i boot.asm
 mv boot.bin boot.com
+cmp boot.com.orig boot.com
 ./asm244i dosio.asm
 mv dosio.bin dosio.com
+cmp dosio.com.orig dosio.com
 for f in cpmtab.asm mon.asm; do
   ./asm244i "$f"
   # No official .com.orig file to compare to.
