@@ -123,7 +123,7 @@ DPBSIZ  EQU     20      ;Size of the structure in bytes
 
 ; BOIS entry point definitions
 
-BIOSSEG EQU     60H
+BIOSSEG EQU     40H
 
 BIOSINIT        EQU     0       ;Reserve room for jump to init code
 BIOSSTAT        EQU     3       ;Console input status check
