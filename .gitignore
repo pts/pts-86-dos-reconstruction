@@ -1,3 +1,7 @@
+*~
 /0.11-junk/86-DOS Version 0.1-C - Serial #11 (ORIGINAL DISK).img
 /0.11-junk/86dos011.img
-*~
+/0.11-nojunk/86dos.sys
+/0.11-nojunk/*.bin
+/0.11-nojunk/*.com
+/0.11-nojunk/asm244i
