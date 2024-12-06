@@ -99,25 +99,22 @@ cpu 8086
 %endm
 
 %macro fat12p2 2  ; Add two FAT12 pointers.
-  db (%1)&0xff
-  db ((%1)>>8)&0xf | ((%2)<<4)&0xf0
-  db ((%2)>>4)&0xff
+  section .fat1
+  db (%1)&0xff, ((%1)>>8)&0xf | ((%2)<<4)&0xf0, ((%2)>>4)&0xff
+  section .fat2
+  db (%1)&0xff, ((%1)>>8)&0xf | ((%2)<<4)&0xf0, ((%2)>>4)&0xff
 %endm
-
-%define FAT12NBUF1 -1
-%define FAT12NBUF2 -1
-%macro fat12p_flush 1  ; %1 is the FAT number: 1 or 2.
-  %if FAT12NBUF%1>=0
-    db (FAT12NBUF%1)&0xff
-    db ((FAT12NBUF%1)>>8)&0xf  ;| ((%2)<<4)&0xf0
-    %define FAT12NBUF%1 -1
+%macro fat12p_flush 0
+  %if FAT12NBUF>=0
+    section .fat1
+    db (FAT12NBUF)&0xff, ((FAT12NBUF)>>8)&0xf  ;| ((%2)<<4)&0xf0
+    section .fat2
+    db (FAT12NBUF)&0xff, ((FAT12NBUF)>>8)&0xf  ;| ((%2)<<4)&0xf0
+    %define FAT12NBUF -1
   %endif
 %endm
-%macro fat12p 2-*  ; %1 is the FAT number: 1 or 2.
-  %assign FAT12NBUF FAT12NBUF%1
-  %assign FAT12PC   FAT12PC%1
-  %rotate 1
-  %rep %0-1
+%macro fat12p 1-*
+  %rep %0
     %if FAT12NBUF>=0
       fat12p2 FAT12NBUF, %1
       %define FAT12NBUF -1
@@ -127,30 +124,26 @@ cpu 8086
     %assign FAT12PC FAT12PC+1
     %rotate 1
   %endrep
-  %assign FAT12NBUF%1 FAT12NBUF
-  %assign FAT12PC%1   FAT12PC
 %endm
-%macro fat12p_init 1  ; %1 is the FAT number: 1 or 2.
-  %define FAT12PC%1 0
-  fat12p %1, -1, -1  ; First two FAT12 entries are always void.
+%macro fat12p_init 0
+  %define FAT12PC 0
+  %define FAT12NBUF -1
+  fat12p -1, -1  ; First two FAT12 entries are always void.
 %endm
-%macro fat12p_file 2  ; %1 is the FAT number: 1 or 2. %2 is the size in bytes.
-  %assign FAT12PFC ((%2)+0x1ff)>>9
+%macro fat12p_file 1  ; %1 is the size in bytes.
+  %assign FAT12PFC ((%1)+0x1ff)>>9
   %if FAT12PFC
     %rep FAT12PFC-1
-      fat12p %1, FAT12PC%1+1
+      fat12p FAT12PC+1
     %endrep
-    fat12p %1, -1
+    fat12p -1
   %endif
 %endm
 
 %macro incfile 3  ; %1 is the junk size (0 for no junk, i.e. just padding); %2 is 11 bytes of padded 86-DOS filename; %3 is the host filename for incbin.
   entry %2, %%label
   incfile_and_junk %1, %%label, %3
-  section .fat1
-  fat12p_file 1, %%label.size
-  section .fat2
-  fat12p_file 2, %%label.size
+  fat12p_file %%label.size
 %endm
 
 SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
@@ -166,10 +159,9 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
   IMG_SIZE equ CLUSTERS_OFS+((FAT_CLUSTER_COUNT-2)<<SSS)+TAIL_SIZE
 
   section .fat1 follows=.header
-  fat12p_init 1
-
   section .fat2 follows=.fat1
-  fat12p_init 2
+
+  fat12p_init
 
   section .rootdir follows=.fat2
 
@@ -187,14 +179,14 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
   section .clusters
   db_until IMG_SIZE-CLUSTERS_OFS, 0xe5
 
+  fat12p_flush
+
   section .fat1
-  fat12p_flush 1
   db_until ((FAT_CLUSTER_COUNT*3+1)>>1), 0
   db_until FAT_SIZE, 0xe5
   assert_at FAT_SIZE
 
   section .fat2
-  fat12p_flush 2
   db_until ((FAT_CLUSTER_COUNT*3+1)>>1), 0
   db_until FAT_SIZE, 0xe5
 
