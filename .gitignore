@@ -6,3 +6,8 @@
 /0.11-nojunk/*.bin
 /0.11-nojunk/*.com
 /0.11-nojunk/asm244i
+/1.14-scp-oem-tarbell/86dos011.img
+/1.14-scp-oem-tarbell/86dos.sys
+/1.14-scp-oem-tarbell/*.bin
+/1.14-scp-oem-tarbell/*.com
+/1.14-scp-oem-tarbell/asm244i
