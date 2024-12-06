@@ -101,33 +101,35 @@ echo "
   incbin F86DOS114IMG, R, S  ; \`nasm -DR=start_ofs -DS=file_size'.
 %endif" >extract.nasm
 
-nasm -O0 -o boot.com.orig     -DR=0x0  -DS=0x006a extract.nasm
-nasm -O0 -o dosio.com.orig    -DR=0x80 -DS=0x03a4 extract.nasm
-nasm -O0 -o 86dos.sys.orig    -DX=0x02 -DS=0x172e extract.nasm
-nasm -O0 -o command.com.orig  -DX=0x0e -DS=0x0bc9 extract.nasm
-nasm -O0 -o debug.com.orig    -DX=0x14 -DS=0x1599 extract.nasm
-nasm -O0 -o asm.com.orig      -DX=0x1f -DS=0x1ff0 extract.nasm
-nasm -O0 -o sys.com.orig      -DX=0x2f -DS=0x01d4 extract.nasm
-nasm -O0 -o time.com.orig     -DX=0x30 -DS=0x00f1 extract.nasm
-nasm -O0 -o date.com.orig     -DX=0x31 -DS=0x012f extract.nasm
-nasm -O0 -o edlin.com.orig    -DX=0x32 -DS=0x0900 extract.nasm
-nasm -O0 -o chkdsk.com.orig   -DX=0x37 -DS=0x04b5 extract.nasm
-nasm -O0 -o rdcpm.com.orig    -DX=0x3a -DS=0x051e extract.nasm
-nasm -O0 -o makrdcpm.com.orig -DX=0x3d -DS=0x012f extract.nasm
-nasm -O0 -o trans.com.orig    -DX=0x3e -DS=0x0c12 extract.nasm
-nasm -O0 -o hex2bin.com.orig  -DX=0x45 -DS=0x01e3 extract.nasm
-nasm -O0 -o init.com.orig     -DX=0x46 -DS=0x027f extract.nasm
-nasm -O0 -o init.asm.orig     -DX=0x48 -DS=0x336e extract.nasm
-nasm -O0 -o dosio.asm.orig    -DX=0x62 -DS=0x8e4b extract.nasm
-nasm -O0 -o mon.asm.orig      -DX=0xaa -DS=0x8b17 extract.nasm
-nasm -O0 -o cpmtab.asm.orig   -DX=0xf0 -DS=0x0430 extract.nasm
-nasm -O0 -o boot.asm.orig     -DX=0xf3 -DS=0x0a29 extract.nasm
-nasm -O0 -o news.doc.orig     -DX=0xf9 -DS=0x097e extract.nasm
-nasm -O0 -o readthis.doc.orig -DREADTHIS_DOC      extract.nasm
+nasm -O0 -o boot.com.orig     -DR=0x0   -DS=0x006a extract.nasm
+nasm -O0 -o dosio.com.orig    -DR=0x80  -DS=0x03a4 extract.nasm
+nasm -O0 -o 86dos.sys.orig    -DX=0x02  -DS=0x172e extract.nasm
+nasm -O0 -o command.com.orig  -DX=0x0e  -DS=0x0bc9 extract.nasm
+nasm -O0 -o debug.com.orig    -DX=0x14  -DS=0x1599 extract.nasm
+nasm -O0 -o asm.com.orig      -DX=0x1f  -DS=0x1ff0 extract.nasm
+nasm -O0 -o sys.com.orig      -DX=0x2f  -DS=0x01d4 extract.nasm
+nasm -O0 -o time.com.orig     -DX=0x30  -DS=0x00f1 extract.nasm
+nasm -O0 -o date.com.orig     -DX=0x31  -DS=0x012f extract.nasm
+nasm -O0 -o edlin.com.orig    -DX=0x32  -DS=0x0900 extract.nasm
+nasm -O0 -o chkdsk.com.orig   -DX=0x37  -DS=0x04b5 extract.nasm
+nasm -O0 -o rdcpm.com.orig    -DX=0x3a  -DS=0x051e extract.nasm
+nasm -O0 -o makrdcpm.com.orig -DX=0x3d  -DS=0x012f extract.nasm
+nasm -O0 -o trans.com.orig    -DX=0x3e  -DS=0x0c12 extract.nasm
+nasm -O0 -o hex2bin.com.orig  -DX=0x45  -DS=0x01e3 extract.nasm
+nasm -O0 -o init.com.orig     -DX=0x46  -DS=0x027f extract.nasm
+nasm -O0 -o init.asm.orig     -DX=0x48  -DS=0x336e extract.nasm
+nasm -O0 -o dosio.asm.orig    -DX=0x62  -DS=0x8e4b extract.nasm
+nasm -O0 -o mon.asm.orig      -DX=0xaa  -DS=0x8b17 extract.nasm
+nasm -O0 -o cpmtab.asm.orig   -DX=0xf0  -DS=0x0430 extract.nasm
+nasm -O0 -o boot.asm.orig     -DX=0xf3  -DS=0x0a29 extract.nasm
+nasm -O0 -o news.doc.orig     -DX=0xf9  -DS=0x097e extract.nasm
+nasm -O0 -o fjunk1.dat.orig   -DX=0x108 -DS=0x1600 extract.nasm
+nasm -O0 -o readthis.doc.orig -DREADTHIS_DOC       extract.nasm
 rm -f extract.nasm
 
 touch -d '1981-08-26 12:00:00 GMT' boot.com.orig  # Use the date of boot.asm.orig.
 touch -d '1981-12-11 12:00:00 GMT' dosio.com.orig  # Use the date of dosio.asm.orig.
+touch -d '1981-12-11 12:00:00 GMT' fjunk1.dat.orig  # Use the most recent date.
 touch -d '1981-04-18 12:00:00 GMT' hex2bin.com.orig
 touch -d '1981-04-30 12:00:00 GMT' makrdcpm.com.orig
 touch -d '1981-05-26 12:00:00 GMT' mon.asm.orig
