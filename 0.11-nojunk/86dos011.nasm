@@ -2,7 +2,7 @@
 ; 86dos011.nasm: reconstruct the 86-DOS 0.11 FAT12-shortdir disk image
 ; by pts@fazekas.hu at Thu Dec  5 20:33:37 CET 2024
 ;
-; Compile with: nasm -O0 -o 86dos011.img 86dos011.nasm
+; Compile with: nasm -Djunk -O0 -o 86dos011.img 86dos011.nasm
 ; Minimum NASM version required: 0.98.39.
 ; Specify -Djunk=pad to avoid reading junk bytes from the FSJUNKDAT.
 ;
