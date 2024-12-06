@@ -24,6 +24,9 @@ for f in init.asm hex2bin.asm trans.asm; do
   ./asm244i "$f"
   cmp "${f%.*}.com.orig" "${f%.*}.com"
 done
-#nasm -w+orphan-labels -f bin -O0 -Djunk -o 86dos011.img 86dos011.nasm
+nasm -w+orphan-labels -f bin -O0 -o 86dos114.img 86dos114.nasm
+if test -f 86dos11t.img; then
+  cmp 86dos11t.img 86dos114.img 
+fi
 
 : "$0" OK.
