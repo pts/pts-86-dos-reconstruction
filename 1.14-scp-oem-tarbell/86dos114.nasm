@@ -246,5 +246,7 @@ incfile 0x02, 'NEWS    DOC', 'news.doc.orig',     0, 1981, 11, 24  ; , 0x00f9 ++
 incfile 0x3b, 'READTHISDOC', 'readthis.doc.orig', 0, 1981, 12, 11  ; , 0x00fe ++ dd 0x1545  ; This file is affected by SKIPCLF.
 %assign DATE FAT_DATE(1981, 12, 11)
 entry 0xe5, 'OSIO   HEX', 0, DATE, 0x0108, 0x08f6  ; A deleted file. This entry is junk.
-junk_between 0x24c00, 0x2c480
+%ifndef junk
+  junk_between 0x24c00, 0x2c480
+%endif
 fatfs_end
