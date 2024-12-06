@@ -39,7 +39,7 @@ cpu 8086
     %if $-$$+CLUSTERS_OFS<=(%1)
       db_until (%1)-CLUSTERS_OFS, 0xe5  ; Fill before the juk.
     %endif
-    junkbin $-$$+CLUSTERS_OFS, (%2)-($-$$+CLUSTERS_OFS)  ; Even more junk.
+    junkbin $-$$+CLUSTERS_OFS, (%2)-($-$$+CLUSTERS_OFS), 0xe5  ; Even more junk.
   %endif
 %endm
 
@@ -60,42 +60,37 @@ cpu 8086
 %endm
 
 %define FSJUNKDATPOS 0
-%macro junkbin 3  ; %1 is the junk size available in FSJUNKDAT, %3 is offset in JUNKIMG, %3 is junk size.
-  ; Same as: incbin JUNKIMG, %2, %3
-  ;incbin JUNKIMG, %2, %3
-  incbin FSJUNKDAT, FSJUNKDATPOS+(%1)-(%3), %3
-  %assign FSJUNKDATPOS FSJUNKDATPOS+(%1)
+%macro junkbin 4  ; %1 is the junk size available in FSJUNKDAT, %3 is offset in JUNKIMG, %3 is the desired junk size; %4 is the filler byte.
+  %ifdef junk  ; `nasm -Djunk' means no junk :-).
+    times (%3) db %4
+  %elif %3
+    ; Same as: incbin JUNKIMG, (%2), (%3)
+    %if (%1)<(%3)
+      times (%3)-(%1) db %4  ; If too little junk is available, put it to the end.
+      incbin FSJUNKDAT, FSJUNKDATPOS, %1
+    %else
+      incbin FSJUNKDAT, FSJUNKDATPOS+(%1)-(%3), %1
+    %endif
+    %assign FSJUNKDATPOS FSJUNKDATPOS+(%1)
+  %else
+    times (%3) db %4
+  %endif
 %endm
-%macro junkbin 2  ; %1 is offset in JUNKIMG, %2 is junk size.
-  junkbin %2, %1, %2
+%macro junkbin 3  ; %1 is offset in JUNKIMG, %2 is junk size, %3 is the filler byte.
+  junkbin %2, %1, %2, %3
 %endm
 
 %macro incres 3  ; %1 is the junk size available in FSJUNKDAT.
   %%res: incbin %2
-  %ifdef junk  ; `nasm -Djunk=pad'.
-    times (%3)-$+%%res db 0
-  %elif %1
-    %ifdef FSJUNKDAT
-      %if (%1)<((%3)-$+%%res)  ; If too little junk is available, put it to the end.
-        times -(%1)+((%3)-$+%%res) db 0
-        junkbin %1, $-$$, %1
-      %else
-        junkbin %1, $-$$+(%1)-((%3)-$+%%res), (%3)-$+%%res
-      %endif
-    %else
-      times (%3)-$+%%res db 0
-    %endif
-  %else
-    times (%3)-$+%%res db 0
-  %endif
-  assert_at %%res+(%3)+(-(%3)&0x7f)-$$  ; Check approximate file size: number of 0x80 block must match.
+  junkbin %1, $-$$, (%3)-$+%%res, 0
+  assert_at %%res+(%3)-$$  ; Check approximate file size: number of 0x80 block must match.
 %endm
 %macro incfile_and_junk 3  ; %1 is the junk size available in FSJUNKDAT.
   section .clusters
   %2:
   %if (($-$$)>>SSS)+2==SKIPCLF
     incbin %3, 0, (SKIPCLA-SKIPCLF)<<9
-    junkbin $-$$+CLUSTERS_OFS, (SKIPCLB-SKIPCLA)<<9
+    junkbin $-$$+CLUSTERS_OFS, (SKIPCLB-SKIPCLA)<<9, 0xe5
     incbin %3, (SKIPCLA-SKIPCLF)<<9
     %2.size equ $-(%2)-((SKIPCLB-SKIPCLA)<<9)
   %else
@@ -103,23 +98,7 @@ cpu 8086
     %2.size equ $-(%2)
   %endif
   %2.fatsize equ $-(%2)
-  %2.padsize equ ($$-$)&0x7f
-  %ifdef junk  ; `nasm -Djunk=pad'.
-    times %2.padsize db 0xe5
-  %elif %1
-    %ifdef FSJUNKDAT
-      %if (%1)<(%2.padsize)  ; If too little junk is available, put it to the end.
-        times -(%1)+(%2.padsize) db 0
-        junkbin %1, $-$$+CLUSTERS_OFS, %1
-      %else
-        junkbin %1, $-$$+CLUSTERS_OFS+(%1)-(%2.padsize), (%2.padsize)
-      %endif
-    %else
-      times %2.padsize db 0xe5
-    %endif
-  %else
-    times %2.padsize db 0xe5
-  %endif
+  junkbin %1, $-$$+CLUSTERS_OFS, ($$-$)&0x7f, 0xe5
   db_until ($-$$)+(($$-$)&0x1ff), 0xe5
   section .header
 %endm
@@ -182,6 +161,10 @@ cpu 8086
 SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 
 %macro fatfs_start 4
+  %ifndef FSJUNKDAT
+    %define junk  ; This means: no junk :-).
+  %endif
+
   HEADER_SIZE equ %1
   FAT_CLUSTER_COUNT equ %2
   MAX_FILE_COUNT equ %3
