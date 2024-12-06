@@ -20,5 +20,6 @@ for f in asm.asm chess.asm command.asm edlin.asm hex2bin.asm rdcpm.asm sys.asm t
   ./asm244i "$f"
   cmp "${f%.*}.com.orig" "${f%.*}.com"
 done
+nasm -w+orphan-labels -f bin -O0 -Djunk -o 86dos011.img 86dos011.nasm
 
 : "$0" OK.
