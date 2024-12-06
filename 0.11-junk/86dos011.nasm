@@ -61,7 +61,7 @@ cpu 8086
         times -(%1)+((%3)-$+%%res) db 0
         junkbin %1, $-$$, %1
       %else
-        junkbin %1, $-$$+(%1)-((%3)-$+%%res), (%3)-$+%%res  ; !! Junk. !! Really from the .img? Isn't command.com longer?
+        junkbin %1, $-$$+(%1)-((%3)-$+%%res), (%3)-$+%%res
       %endif
     %else
       times (%3)-$+%%res db 0x1a
@@ -84,7 +84,7 @@ cpu 8086
         times -(%1)+(%2.padsize) db 0
         junkbin %1, $-$$+CLUSTERS_OFS, %1
       %else
-        junkbin %1, $-$$+CLUSTERS_OFS+(%1)-(%2.padsize), (%2.padsize)  ; !! Junk. !! Really from the .img? Isn't command.com longer?
+        junkbin %1, $-$$+CLUSTERS_OFS+(%1)-(%2.padsize), (%2.padsize)
       %endif
     %else
       times %2.padsize db 0x1a
@@ -146,11 +146,7 @@ cpu 8086
 
 %macro incfile 3  ; %1 is the junk size (0 for no junk, i.e. just padding); %2 is 11 bytes of padded 86-DOS filename; %3 is the host filename for incbin.
   entry %2, %%label
-  %if %1
-    incfile_and_junk %1, %%label, %3
-  %else
-    incfile_and_junk 0, %%label, %3
-  %endif
+  incfile_and_junk %1, %%label, %3
   section .fat1
   fat12p_file 1, %%label.size
   section .fat2
