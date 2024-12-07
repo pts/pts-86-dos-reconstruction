@@ -2,10 +2,20 @@
 /0.11-junk/86-DOS Version 0.1-C - Serial #11 (ORIGINAL DISK).img
 /0.11-junk/86dos011.img
 /0.11-nojunk/86dos011.img
+/0.11-nojunk/86dos011_bydos.img
 /0.11-nojunk/86dos.sys
 /0.11-nojunk/*.bin
 /0.11-nojunk/*.com
+/0.11-nojunk/*.hex
+/0.11-nojunk/*.prn
 /0.11-nojunk/asm244i
+/0.11-nojunk/chess.dos
+/0.11-nojunk/pcdos320.img
+/0.11-nojunk/mydos.img
+/0.11-nojunk/COMMAND.COM
+/0.11-nojunk/IBMBIO.COM
+/0.11-nojunk/IBMDOS.COM
+/0.11-nojunk/autoexec.bat
 /1.14-scp-oem-tarbell/86dos011.img
 /1.14-scp-oem-tarbell/86dos.sys
 /1.14-scp-oem-tarbell/*.bin

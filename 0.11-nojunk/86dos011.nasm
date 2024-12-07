@@ -181,7 +181,9 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
   db_until HEADER_SIZE, 0
 
   section .clusters
+  %ifndef NOEND  ; Save memory on DOS 3.20.
   db_until IMG_SIZE-CLUSTERS_OFS, 0xe5
+  %endif
 
   fat12p_flush
 
@@ -208,7 +210,11 @@ incres 0x20, 'boot.com', 0x80
 incres 0x4f, 'dosio.com', 0x300
 db_until 0x480, 0
 incbin '86dos.sys'
+%ifdef DOSHOST
+incfile 0x54, 'COMMAND COM', 'command.dos'  ; Don't overwrite DOS command.com.
+%else
 incfile 0x54, 'COMMAND COM', 'command.com'
+%endif
 incfile 0,    'RDCPM   COM', 'rdcpm.com'
 incfile 0,    'HEX2BIN COM', 'hex2bin.com'
 incfile 0x6f, 'ASM     COM', 'asm.com'
@@ -216,5 +222,9 @@ incfile 0x70, 'TRANS   COM', 'trans.com'
 incfile 0x67, 'SYS     COM', 'sys.com'
 incfile 0x5,  'EDLIN   COM', 'edlin.com'
 incfile 0x2a, 'CHESS   COM', 'chess.com'
+%ifdef DOSHOST
+incfile 0,    'CHESS   DOC', 'chess.dos'  ; Filename chess.doc.orig would be too long.
+%else
 incfile 0,    'CHESS   DOC', 'chess.doc.orig'
+%endif
 fatfs_end
