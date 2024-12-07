@@ -335,6 +335,7 @@ HFLAG:	EQU	1	;-h flag specified: generate Intel HEX file (.hex)
 NFLAG:	EQU	2	;-s flag specified: generate symbol listing
 SFLAG:	EQU	4	;-n flag specified: generate instructions understood by ndisasm(1)
 XFLAG:	EQU	8	;-x flag specified: emit X instead of NUL for DS bytes
+PFLAG:	EQU	0x10	;-p flag specified: do not assume initial PUT 100H+DB
 
 ;STATE bitmask values.
 STHASHEXADD: EQU 1
@@ -681,8 +682,12 @@ AHFLAG:	CMP	AL,"N"
 	OR	DL,NFLAG
 	JP	NEXTFLAG
 AXFLAG:	CMP	AL,"X"
-	JNE	ANFLAG
+	JNE	APFLAG
 	OR	DL,XFLAG
+	JP	NEXTFLAG
+APFLAG:	CMP	AL,"P"
+	JNE	ANFLAG
+	OR	DL,PFLAG
 	JP	NEXTFLAG
 ANFLAG:	CMP	AL,"S"
 	JNE	EXUSAGE
@@ -2603,9 +2608,9 @@ $EQU:
 RET14:	RET
 $ORG:
 	MOV	[PC],BX
-	TEST	BYTE [STATE], STHASORG
+	TEST	BYTE [STATE],STHASORG
 	JNZ	SKIPORGV
-	OR	BYTE [STATE], STHASORG
+	OR	BYTE [STATE],STHASORG
 	MOV	[ORGV],BX
 SKIPORGV:
 	MOV	AL,-2
@@ -3144,7 +3149,14 @@ DONEOPENLST:
 	;MOV	[ERRCNT],AX	;ERRCNT is still 0 until now, pass 1 doesn't change it.
 	MOV	[PC],AX
 	MOV	[LINE],AX	;Current line number
-	MOV	WORD [HEXADD],OBJECT  ; The default value 100H here is useless, because it doesn't match the default ORG value (0).
+	MOV	DX,OBJECT	;The default value 100H here is useless, because it doesn't match the default ORG value (0).
+	MOV	WORD [HEXADD],DX
+	TEST	BYTE [FLAGS],PFLAG
+	JNZ	SKIPWITHPFLAG
+	INC	BYTE [STATE]	;Set bit STHASHEXADD == 1.
+	MOV	[OLDHEXADD],DX	;WORD [HEXADD]
+	MOV	[MAXHEXADD],DX
+SKIPWITHPFLAG:
 	CALL	FFOPENSRC
 	MOV	BYTE [NEXTCHRSTATE], 0
 	XOR	AX,AX
@@ -3714,7 +3726,7 @@ BINFLUSHED:
 CODBYT:
 ;Encode and append code or data byte in AL to the .bin and .hex files. Ruins BX.
 ;Ruins BX and DX etc.
-	TEST	BYTE [STATE], STHASHEXADD
+	TEST	BYTE [STATE],STHASHEXADD
 	JNZ	HASHEXADD1
 	INC	BYTE [STATE]	;Set bit STHASHEXADD == 1.
 	MOV	BX,[HEXADD]
@@ -3725,7 +3737,7 @@ HASHEXADD1:
 	PUSH	AX
 	MOV	BX,[OLDHEXADD]
 	MOV	DX,[HEXADD]
-	INC	BX
+	;INC	BX
 	CMP	BX,DX
 	JE	DONEHEXADD	;No need to seek or to add bytes.
 	; Seek forward or backward in the .bin file.
@@ -3753,8 +3765,8 @@ NEXTHEXADD:
 	INC	BX
 	JP	NEXTHEXADD
 DONEHEXADD:
-	MOV	[OLDHEXADD],BX
 	INC	BX
+	MOV	[OLDHEXADD],BX
 	CMP	BX,[MAXHEXADD]
 	JNA	KEEPMAXHEXADD
 	MOV	[MAXHEXADD],BX
@@ -4914,6 +4926,7 @@ USAGE:	DB	'Usage: asm244i <input>[.asm] [[-]flag...]',13,10  ; `/' instead of `-
 	DB	's generate symbol listing',13,10
 	DB	'n emit instructions understood by ndisasm(1)',13,10
 	DB	'x emit X instead of NUL for DS bytes',13,10
+	DB	'p do not assume initial PUT 100H+DB',13,10
 	;DB	'1 use DOS >=1.x or 86-DOS >=1.10 ABI',13,10  ; Not applicable on Linux.
 	DB	'$'
 

@@ -245,7 +245,7 @@ incfile 0x1d, 'HEX2BIN COM', 'hex2bin.com',       0, 1981, 04, 18  ; , 0x0045 ++
 incfile 0x01, 'INIT    COM', 'init.com',          0, 1981, 12, 11  ; , 0x0046 ++ dd 0x027f
 incfile 0x12, 'INIT    ASM', 'init.asm',          0, 1981, 12, 11  ; , 0x0048 ++ dd 0x336e
 incfile 0x35, 'DOSIO   ASM', 'dosio.asm',         0, 1981, 12, 11  ; , 0x0062 ++ dd 0x8e4b
-incfile 0x69, 'MON     ASM', 'mon.asm.orig',      0, 1981, 05, 26  ; , 0x00aa ++ dd 0x8b17  ; !! Change mon.asm back, so we can copy it here instead of mon.asm.orig.
+incfile 0x69, 'MON     ASM', 'mon.asm',           0, 1981, 05, 26  ; , 0x00aa ++ dd 0x8b17
 incfile 0x50, 'CPMTAB  ASM', 'cpmtab.asm',        0, 1981, 12, 11  ; , 0x00f0 ++ dd 0x0430
 incfile 0x57, 'BOOT    ASM', 'boot.asm',          0, 1981, 08, 26  ; , 0x00f3 ++ dd 0x0a29
 incfile 0x02, 'NEWS    DOC', 'news.doc.orig',     0, 1981, 11, 24  ; , 0x00f9 ++ dd 0x097e
