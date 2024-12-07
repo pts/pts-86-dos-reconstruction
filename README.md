@@ -28,10 +28,12 @@ from its source code.
 
 However, the syntax is sufficiently different from other assemblers (such as
 MASM 1.00, which has been released by Microsoft in 1981, or TASM), so it
-needs significant manual conversion effort to convert it first. Microsoft
-and IBM did the conversion internally, and by the time they released their
-first DOS (MS-DOS 1.25 and IBM PC DOS 1.1), all programs were compiled by
-MASM. The SCP assemblers haven't been widely used ever since.
+needs significant manual conversion effort to convert it first. (See [more
+details](https://stackoverflow.com/questions/63596347/what-are-di-ei-and-up-instructions-in-original-ms-dos-source-code)
+about the syntax.) Microsoft and IBM did the conversion internally, and by
+the time they released their first DOS (MS-DOS 1.25 and IBM PC DOS 1.1), all
+programs were compiled by MASM. The SCP assemblers haven't been widely used
+ever since.
 
 ## 86-DOS releases since 2020
 
@@ -169,7 +171,3 @@ The following goals have been achieved:
 It is not a goal of this work to build on then-contemporary (1980) hardware,
 or to write the floppy disk images to actual, 8" floppy disks. This is left
 as an excercise to the reader.
-
-## TODOs
-
-* TODO(pts): Add more info about the SCP assembler syntax.
