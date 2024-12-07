@@ -4,11 +4,11 @@
 ;
 ; Compile with: nasm -O0 -o 86dos011.img 86dos011.nasm
 ; Minimum NASM version required: 0.98.39.
-; Specify -Djunk=pad to avoid reading junk bytes from the FSJUNKDAT.
+; Specify -DNO_JUNK to avoid reading junk bytes from the FSJUNKDAT.
 ;
 ; This program creates the FAT12-shortdir filesystem data structures
 ; automatically (including the two FATs) based on the included input files
-; it receives via `incres_and_junk' and `incfile'.
+; it receives via `incres' and `incfile'.
 ;
 ; You can add your own files to the generated image, just scroll to the
 ; bottom, and add an `incfile 0, ...' line.
@@ -53,7 +53,7 @@ cpu 8086
 
 %macro incres 3  ; %1 is the junk size available in FSJUNKDAT.
   %%res: incbin %2
-  %ifdef junk  ; `nasm -Djunk=pad'.
+  %ifdef NO_JUNK  ; `nasm -DNO_JUNK'.
     times (%3)-$+%%res db 0x1a
   %elif %1
     %ifdef FSJUNKDAT
@@ -76,7 +76,7 @@ cpu 8086
   %2: incbin %3
   %2.size equ $-(%2)
   %2.padsize equ ($$-$)&0x7f
-  %ifdef junk  ; `nasm -Djunk=pad'.
+  %ifdef NO_JUNK  ; `nasm -DNO_JUNK'.
     times %2.padsize db 0x1a
   %elif %1
     %ifdef FSJUNKDAT
@@ -196,12 +196,12 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 
 ; ---
 
-; Junk bytes are read from this file unless `nasm -Djunk=pad' is used.
+; Junk bytes are read from this file unless `nasm -DNO_JUNK' is used.
 %define FSJUNKDAT 'fsjunk.dat.orig'
 fatfs_start 0x1a00, 0x1e4, 0x40, 0x100
 
-incres 0x20, 'boot.com.orig', 0x80  ; Contains junk in the end.
-incres 0x4f, 'dosio.com.orig', 0x300  ; Junk.
+incres 0x20, 'boot.com.orig', 0x80
+incres 0x4f, 'dosio.com.orig', 0x300
 db_until 0x480, 0
 incbin '86dos.sys.orig'
 incfile 0x54, 'COMMAND COM', 'command.com.orig'

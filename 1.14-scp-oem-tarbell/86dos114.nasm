@@ -4,7 +4,7 @@
 ;
 ; Compile with: nasm -O0 -o 86dos114.img 86dos114.nasm
 ; Minimum NASM version required: 0.98.39.
-; Specify -Djunk=pad to avoid reading junk bytes from the FSJUNKDAT.
+; Specify -DNO_JUNK to avoid reading junk bytes from the FSJUNKDAT.
 ;
 ; This program creates the FAT12 filesystem data structures automatically
 ; (including the two FATs) based on the included input files it receives via
@@ -61,7 +61,7 @@ cpu 8086
 
 %define FSJUNKDATPOS 0
 %macro junkbin 4  ; %1 is the junk size available in FSJUNKDAT, %3 is offset in JUNKIMG, %3 is the desired junk size; %4 is the filler byte.
-  %ifdef junk  ; `nasm -Djunk' means no junk :-).
+  %ifdef NO_JUNK  ; `nasm -DNO_JUNK'.
     times (%3) db %4
   %elif %3
     ; Same as: incbin JUNKIMG, (%2), (%3)
@@ -162,7 +162,7 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 
 %macro fatfs_start 4
   %ifndef FSJUNKDAT
-    %define junk  ; This means: no junk :-).
+    %define NO_JUNK
   %endif
 
   HEADER_SIZE equ %1
@@ -213,7 +213,7 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 
 ; ---
 
-; Junk bytes are read from this file unless `nasm -Djunk=pad' is used.
+; Junk bytes are read from this file unless `nasm -DNO_JUNK' is used.
 ;%define JUNKIMG '86dos11t.img'
 %define FSJUNKDAT 'fsjunk.dat.orig'
 %ifdef NO_SKIP  ; `nasm -DNO_SKIP'
@@ -252,7 +252,7 @@ incfile 0x02, 'NEWS    DOC', 'news.doc.orig',     0, 1981, 11, 24  ; , 0x00f9 ++
 incfile 0x3b, 'READTHISDOC', 'readthis.doc.orig', 0, 1981, 12, 11  ; , 0x00fe ++ dd 0x1545  ; This file is affected by SKIPCLF.
 %assign DATE FAT_DATE(1981, 12, 11)
 entry 0xe5, 'OSIO   HEX', 0, DATE, 0x0108, 0x08f6  ; A deleted file. This entry is junk.
-%ifndef junk
+%ifndef NO_JUNK
   junk_between 0x24c00, 0x2c480
 %endif
 fatfs_end

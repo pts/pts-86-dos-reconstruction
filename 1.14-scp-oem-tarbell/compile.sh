@@ -28,7 +28,7 @@ nasm -w+orphan-labels -f bin -O0 -o 86dos114.img 86dos114.nasm
 if test -f 86dos11t.img; then
   cmp 86dos11t.img 86dos114.img 
 fi
-nasm -w+orphan-labels -f bin -O0 -Djunk -o 86dos114_nojunk.img 86dos114.nasm
-nasm -w+orphan-labels -f bin -O0 -Djunk -DNO_SKIP -o 86dos114_nojunkskip.img 86dos114.nasm
+nasm -w+orphan-labels -f bin -O0 -DNO_JUNK -o 86dos114_nojunk.img 86dos114.nasm
+nasm -w+orphan-labels -f bin -O0 -DNO_JUNK -DNO_SKIP -o 86dos114_nojunkskip.img 86dos114.nasm
 
 : "$0" OK.
