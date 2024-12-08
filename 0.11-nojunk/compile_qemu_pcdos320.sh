@@ -33,6 +33,9 @@
 # files etc. to avoid the disk from getting full. The final output becomes
 # different from 86dos011.img.
 #
+# TODO(pts): Also build the junk version (without `nasm -DNO_JUNK', with
+# *.junk.asm).
+#
 set -ex
 test "$0" = "${0%/*}" || cd "${0%/*}"
 
@@ -91,9 +94,9 @@ mtools -c mcopy -i mydos.img -n -m trans.asm ::
 : "At the A> prompt, compdos; then run o to exit QEMU."
 qemu-system-i386 -drive file=mydos.img,format=raw,if=floppy -machine pc-1.0 -m 1 -boot a -net none
 
-mtools -c mcopy -i mydos.img -n -m ::86DOS011.IMG 86dos011_bydos.img
+mtools -c mcopy -i mydos.img -n -m ::86DOS011.IMG 86dos011_bydos_nojunk.img
 if test -f 86dos011.img; then
-  cmp 86dos011.img 86dos011_bydos.img
+  cmp 86dos011_nojunk.img 86dos011_bydos_nojunk.img
 fi
 
 : "$0" OK.

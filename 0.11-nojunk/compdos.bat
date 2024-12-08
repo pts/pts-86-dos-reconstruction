@@ -41,7 +41,7 @@ hex102 trans
 del *.hex
 del *.prn
 
-nasm -DDOSHOST -DNOEND -o 86dos011.img 86dos011.nas
+nasm -DDOSHOST -DNO_END -DNO_JUNK -o 86dos011.img 86dos011.nas
 fullimg 86dos011.img
 dir 86dos011.img
 

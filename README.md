@@ -163,7 +163,7 @@ The following goals have been achieved:
 
 * Linux shell scripts (with some use of NASM) are provided to extract the
   files from the original disk images released on Internet Archive: both for
-  86-DOS [0.11](0.11-junk/extract.sh) and
+  86-DOS [0.11](0.11-nojunk/extract.sh) and
   [1.14](1.14-scp-oem-tarbell/extract.sh). These are especially useful,
   because 86-DOS uses ancient variants of the FAT12 filesystem not readily
   supported by modern filesystem and disk imaging tools.

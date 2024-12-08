@@ -2,7 +2,7 @@
 ; 86dos011.nasm: reconstruct the 86-DOS 0.11 FAT12-shortdir disk image
 ; by pts@fazekas.hu at Thu Dec  5 20:33:37 CET 2024
 ;
-; Compile with: nasm -Djunk -O0 -o 86dos011.img 86dos011.nasm
+; Compile with: nasm -O0 -o 86dos011.img 86dos011.nasm
 ; Minimum NASM version required: 0.98.39.
 ; Specify -DNO_JUNK to avoid reading junk bytes from the FSJUNKDAT.
 ;
@@ -181,7 +181,7 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
   db_until HEADER_SIZE, 0
 
   section .clusters
-  %ifndef NOEND  ; Save memory on DOS 3.20.
+  %ifndef NO_END  ; Save memory on DOS 3.20.
   db_until IMG_SIZE-CLUSTERS_OFS, 0xe5
   %endif
 
@@ -203,25 +203,49 @@ SSS equ 9  ; Sector size shift. Sector size is 1<<SSS bytes. Not configurable.
 ; ---
 
 ; Junk bytes are read from this file unless `nasm -DNO_JUNK' is used.
-;%define FSJUNKDAT 'fsjunk.dat'
+%define FSJUNKDAT 'fsjunk.dat.orig'
 fatfs_start 0x1a00, 0x1e4, 0x40, 0x100
 
 incres 0x20, 'boot.com', 0x80
+%ifdef NO_JUNK
 incres 0x4f, 'dosio.com', 0x300
+%else
+incres 0x4f, 'dosio_.com', 0x300
+%endif
 db_until 0x480, 0
 incbin '86dos.sys'
 %ifdef DOSHOST
 incfile 0x54, 'COMMAND COM', 'command.dos'  ; Don't overwrite DOS command.com.
 %else
+%ifdef NO_JUNK
 incfile 0x54, 'COMMAND COM', 'command.com'
+%else
+incfile 0x54, 'COMMAND COM', 'command_.com'
 %endif
+%endif
+%ifdef NO_JUNK
 incfile 0,    'RDCPM   COM', 'rdcpm.com'
+%else
+incfile 0,    'RDCPM   COM', 'rdcpm_.com'
+%endif
 incfile 0,    'HEX2BIN COM', 'hex2bin.com'
+%ifdef NO_JUNK
 incfile 0x6f, 'ASM     COM', 'asm.com'
+%else
+incfile 0x6f, 'ASM     COM', 'asm_.com'
+%endif
+%ifdef NO_JUNK
 incfile 0x70, 'TRANS   COM', 'trans.com'
+%else
+incfile 0x70, 'TRANS   COM', 'trans_.com'
+%endif
 incfile 0x67, 'SYS     COM', 'sys.com'
 incfile 0x5,  'EDLIN   COM', 'edlin.com'
+%ifdef NO_JUNK
 incfile 0x2a, 'CHESS   COM', 'chess.com'
+%else
+incfile 0x2a, 'CHESS   COM', 'chess_.com'
+%endif
 %ifdef DOSHOST
 incfile 0,    'CHESS   DOC', 'chess.dos'  ; Filename chess.doc.orig would be too long.
 %else
