@@ -52,7 +52,7 @@ source files which can be useful for compiling 86-DOS programs. It included
 the full source code of latest known version of the SCP assembler (2.44,
 1983-05-09) by Tim Paterson, running on any of 86-DOS, MS-DOS, IBM PC DOS
 and DOS emulators (including [DOSBox](https://www.dosbox.com/),
-[emu2](https://github.com/dmsc/emu2) and
+[emu2](https://github.com/dmsc/emu2), but not
 [kvikdos](https://github.com/pts/kvikdos)). In addition to the assembler
 release, there are the sources of *command.com*, *io.sys* and *msdos.sys*,
 however most of these are already written in MASM, and they contain (new)
@@ -128,6 +128,9 @@ The following goals have been achieved:
   bootable floppy disk image files (with the 86-DOS custom FAT12-shortdir
   filesystem) from the individual binaries just compiled.
 
+  To reproduce it, run [0.11/compile.sh](0.11/compile.sh) on a Linux x86
+  (i386 or amd64) system, in a terminal window.
+
   The result of the build is bitwise identical to the original floppy disk
   image *86-DOS Version 0.1-C - Serial #11 (ORIGINAL DISK).img* available
   [on the Internet
@@ -161,6 +164,9 @@ The following goals have been achieved:
   and *trans.com*, and some smaller programs such as device drivers have it.
   For files without source, the precompiled (officially released) binaries
   are copied to the floppy disk image.
+
+  To reproduce it, run [1.14/compile.sh](1.14/compile.sh) on a Linux x86
+  (i386 or amd64) system, in a terminal window.
 
   The result of the build is bitwise identical to the original floppy disk
   image *86dos11t.img* available [on
@@ -221,3 +227,142 @@ The following goals have been achieved:
 It is not a goal of this work to build on then-contemporary (1980) hardware,
 or to write the floppy disk images to actual, 8" floppy disks. This is left
 as an excercise to the reader.
+
+## Interesting observations about the 86-DOS code
+
+All the programs in 86-DOS have been written in assembly language. This has
+been the norm in the early 1980s for decades. Notable exceptions were the
+following programming languages between 1957 and 1982: FORTRAN (1957), COBOL
+(1959), LISP (1960), BASIC (1964), PL/I (1964), Pascal (1970) and C (1972).
+Out of these languages, PL/I, Pascal and C have been low-level enough (i.e.
+letting the programmer specify exactly what should happen and how, and how
+much memory should be used) for systems programming. However, compilers for
+these languages needed powerful computers (such as minicomputers or even
+larger ones) to run, a microcomputer (or a personal computer, PC) in the
+early 1980s just wasn't good enough, so operating systems not written in
+assembly language couldn't be self-hosting (i.e. source code of the OS
+compilable on the machine running the OS).
+
+As a comparison, initially
+[Unix](https://en.wikipedia.org/wiki/Research_Unix) (1969), including the
+kernel and userland, was written in assembly language for the computers and
+CPUs it was ported to (PDP-7, PDP-11, VAX, then more). The C programming
+language has been invented in the same research lab where Unix was
+developed, with the purpose of replacing assembly with a higher-level
+systems language for increased developer productivity. Please note that some
+low-level routines including the early bootloader still remained in
+assembly. C has fullfilled this goal and has been the most popular systems
+language ever since (with the Linux kernel written exclusively in C, with a
+few low-level routines in assembly, between its start in 1991 until 2022,
+then Rust code was also allowed). While more than half of Unix V6 (6th
+Edition release, 1975) was still written in assembly, V7 (1979) had most
+tools rewritten in C. However the computers running Unix and the C compiler
+before 1982 were much more powerful than the computers 86-DOS targeted.
+
+Byte size of 86-DOS program binaries is tiny compared to its successors.
+Some sizes are:
+
+| program      | 86-DOS 0.11 | 86-DOS 1.14 | MS-DOS 1.25 | MS-DOS 2.00 | MS-DOS 3.00 |
+| :----------- | ----------: | ----------: | ----------: | ----------: | ----------: |
+| month        | 1980-08     | 1981-12-11  | 1982-04     | 1983-10     | 1985-04     |
+| boot+kernel  |        4078 |        6972 |        8480 |       29312 |       37552 |
+| command.com  |        1196 |        3017 |        4959 |       15480 |       22747 |
+| edlin.com    |        1275 |        2304 |        2432 |        4389 |        7183 |
+| sys.com      |         153 |         468 |         645 |         850 |        3791 |
+| chkdsk.com   |         --- |        1205 |        1770 |        6330 |        9419 |
+
+Just by looking at the code size increase, we can see that Microsoft has
+worked a lot on MS-DOS software development, even though they haven't
+written the original one (but Tim Paterson wrote it, and Microsoft licensed
+it with source code from SCP).
+
+By looking at the disassembly of these programs, it looks like all of them
+(including MS-DOS 3.00) have been written in assembly. (Typical code
+generated by the C compiler has many instances of a *push bp* instruction
+followed by *mov bp, sp*, and *command.com* doesn't have thos.) The disassembly
+also confirms that 86-DOS has been compiled using the SCP assembler, and
+MS-DOS and PC DOS have been compiled with MASH (as evidenced by many
+instances of a short jump followed by a *nop* instruction).
+
+The source code of 86-DOS, MS-DOS and PC DOS hasn't been released in the
+1980s and 1990s, with the exception of the bootloader and the device driver
+part of the kernel (i.e. the source of *dosio.com*, *io.sys* and
+*ibmbio.com*), whose source has been given to OEMs, so that they can port
+MS-DOS to their computers. IBM did the porting in-house for the IBM PCs,
+releasing PC DOS.
+
+The SCP assembler is much faster than NASM (even with optimizations disabled
+in the latter). This can be felt in an emulator, when *asm.asm* with the SCP
+assembler (1979--1983) versus compiling [asm244.nasm](asm244.nasm) with NASM
+0.98.39 (2005-01-15). NASM is written in C, and uses many pointer
+indirections and dynamic allocations. The SCP assembler has much less of
+those.
+
+Very few of the 86-DOS tools (such as the SCP assembler 2.40) also run on
+any of 86-DOS, MS-DOS, IBM PC DOS and DOS emulators (including
+[DOSBox](https://www.dosbox.com/), [emu2](https://github.com/dmsc/emu2), but
+not [kvikdos](https://github.com/pts/kvikdos)).
+
+We have a plausible explanation on how Tim Paterson may have written the
+very first version of 86-DOS, without access to any operating systems or
+user programs running on the brand new Intel 8086 CPU. He probably did it
+like this:
+
+1. For development, he was using a [Cromemco
+   Z-2D](https://wikipedia.org/wiki/Cromemco_Z-2#Cromemco_Z-2D) computer with
+   the Z80 CPU, running CP/M. (See more in [this
+   writeup](https://github.com/TheBrokenPipe/86-DOS-0.11/blob/main/Building.md)
+   about building 86-DOS 0.11 on that machine and other then-contemporary
+   harware.) He had access to an assembler for writing programs which ran on
+   this computer. However, he needed an assembler which targets the 8086 CPU.
+2. He wrote a cross assembler for the Z80, targeting the 8086. A [scanned
+   copy](https://archive.org/details/bitsavers_seattleComsemblerPreliminary_611077)
+   of the manual of this program is available on Internet Archive.
+3. He wrote 86-DOS in the syntax of that assembler, and compiled it on the
+   Cromemco Z-2D. Thus he had the 86-DOS binaries.
+4. He wrote an assembly source code translator from Z80 to 8086. This
+   translaton was distributed as part of 86-DOS, as *trans.com*, also
+   open-sourced by Microsoft in 2018 as
+   [trans.asm](https://github.com/microsoft/MS-DOS/blob/main/v1.25/source/TRANS.ASM))
+   It is possible to automate most of the translation, because the 8086 has
+   more registers than the Z80, and instructions work very simiarly. (This
+   is not a surprise, both of them are based on the Intel 8080 CPU.)
+5. With the translator working on the Cromemco Z-2D, he translated the
+   source code of all his Z80 programs so far (mostly the cross assembler
+   and the translator) to 8086 instructions.
+6. He compiled the translated sources to 8086 binary programs using the
+   cross assembler. He also changed a few system-specific parts manually.
+   Thus he had a self-compiling (non-cross) assembler for the 8086. He
+   included it as *asm.com* in the 86-DOS releases.
+
+This process was repeated on actual hardware, and old Comemco Z-2D, and also
+in an emulator after 2020 by TheBrokenPipe (part of the 86-DOS hacking
+community), see the
+[writeup](https://github.com/TheBrokenPipe/86-DOS-0.11/blob/main/Building.md#the-first-egg).
+
+The process also explains why the 86-DOS syscalls are so similar to the CP/M
+syscalls: syscall numbers are the same, and there is a correspondance of
+registers. The reason is that by providing the same syscall API, Tim
+Paterson's machine-translated programs (from Z80 to 8086 assembly) work
+without needing too many system-specific changes.
+
+As an example for the API-specifc similarity, the [C_WRITESTR
+function](https://www.seasip.info/Cpm/bdos.html) on CP/M Z80 can be invoked
+by loading 9 to the C register, loading the address of a `$`-terminated
+string to DE, and calling to address 5 (the system call entry point). And on
+86-DOS 8086 (API designed by Tim Paterson) it can be invoked by loading 9 to
+the AH register, loading the address of a `$`-terminated string to DX, and
+calling to address 5.
+
+The DOS syscall API has been extended a lot since 1980 with function not
+available in CP/M, and the ABI of those functions are very different. Also
+*int 21h* has been introduced (already in 86-DOS) as an equivalent
+alternative of *call 5*, and most DOS programs use *int 21h* rather than the
+historically useful *call 5* as the entry point.
+
+Decades after 1980, the source code of 86-DOS and CP/M become available
+online, and by looking it both it looks very unlikely that Tim Paterson
+copied source code from CP/M to 86-DOS. Also he probably didn't have access
+to the source of CP/M when he was writing 86-DOS. He only copied the syscall
+API, probably because that was convenient for him when porting the first
+few of his programs from CP/M Z80 to 86-DOS 8086.
