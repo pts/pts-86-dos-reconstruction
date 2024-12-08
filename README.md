@@ -366,3 +366,34 @@ copied source code from CP/M to 86-DOS. Also he probably didn't have access
 to the source of CP/M when he was writing 86-DOS. He only copied the syscall
 API, probably because that was convenient for him when porting the first
 few of his programs from CP/M Z80 to 86-DOS 8086.
+
+Software development tools were much less powerful and convenient between
+1979 and 1983 than what we are used today, and even what was available in
+1990. The cycle is still the same over the decades: write-compile-run-debug.
+But in the early 1980s the use of full-screen text editors in which it's
+possible to move the cursor to any character, and change or insert text
+visually at its own place, was not widespread. (*vi*, one of the first such
+interactive editors has been available since 1976, but its use was not
+widespread.) Editors like the Unix *ed*, the Unix *ex* and the CP/M *ed*
+were line-based: the user entered a line number, and then he had to retype
+the entire line to change it. Tim Paterson wrote the
+[edlin.com](https://en.wikipedia.org/wiki/Edlin) editor in 1980, with
+similar features for line-based editing only.
+
+Debugging was also different, because symbolic debugging didn't exist. If
+the execution of the program was stopeed in a debugger for inspecting
+program state, the developer was only seeing memory addresses as numeric
+constants, not variable or function names. To do that mapping (from address
+to function name), before running a program, the programmer asked the
+compiler for a listing (the SCP assembler produces the listing by default as
+a .prn file), printed out the listing, and while debugging they were looking
+at the printout, which (for assembly-language programs) displayed
+corresponding memory address, source file line number, label (variable or
+function name), source file line contents, and encoding instruction bytes in
+the same line, so it was easy to do the mapping by finding the source line
+in the listing printout, and then looking at it.
+
+Development was also much slower: there were minute-long waiting times for
+the compiler and floppy disk I/O. After that, sometimes the floppy disk had
+to be ejected and moved to another computer for trying the newly compiled
+program.
