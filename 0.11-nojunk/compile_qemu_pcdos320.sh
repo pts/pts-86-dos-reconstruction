@@ -28,6 +28,11 @@
 # follow instruction there as well. The final output is the 86-DOS floppy
 # image file 86dos011_bydos.img.
 #
+# This build doesn't seem to work with a 720 kB floppy, even if `del ...`
+# commands are added to the middle of compdos.bat to delete unusued sorce
+# files etc. to avoid the disk from getting full. The final output becomes
+# different from 86dos011.img.
+#
 set -ex
 test "$0" = "${0%/*}" || cd "${0%/*}"
 
