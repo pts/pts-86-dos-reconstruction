@@ -61,20 +61,16 @@ for f in edlin.asm hex2bin.asm sys.asm; do
 done
 for f in dosio.asm asm.asm chess.asm command.asm rdcpm.asm trans.asm; do
   ./asm244i "$f"
-  if test -f "${f%.*}.junk.asm"; then  # !!
-    cat "${f%.*}.junk.asm" "$f" >"${f%.*}_.asm"  # Concatenate with junk.
-    ./asm244i "${f%.*}_.asm"
-    rm -f "${f%.*}_.asm"
-  fi
+  cat "${f%.*}.junk.asm" "$f" >"${f%.*}_.asm"  # Concatenate with junk.
+  ./asm244i "${f%.*}_.asm"
+  rm -f "${f%.*}_.asm"
   if test "$f" = dosio.asm; then
     mv dosio.bin dosio.com
     cmp dosio.com.nojunk.orig dosio.com
     mv dosio_.bin dosio_.com
     cmp dosio.com.orig dosio_.com
   else
-    if test -f "${f%.*}_.com"; then  # !!
-      cmp "${f%.*}.com.orig" "${f%.*}_.com"
-    fi
+    cmp "${f%.*}.com.orig" "${f%.*}_.com"
   fi
 done
 nasm -w+orphan-labels -f bin -O0 -DNO_JUNK -o 86dos011_nojunk.img 86dos011.nasm
