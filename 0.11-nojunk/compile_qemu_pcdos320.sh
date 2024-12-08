@@ -9,14 +9,24 @@
 # later (e.g. from here: https://winworldpc.com/product/pc-dos/3x), and save
 # the image of the 1st floppy disk as pcdos320.img.
 #
-# Earlier versions of DOS don't work, because they don't seem to support 1.2
-# MB virtual floppy disks in QEMU, and 320 kB floppy disks are way too
-# small for this build.
+# Earlier versions of DOS (such as IBM PC DOS 3.00 and 3.10) don't work,
+# because they don't seem to support 1.2 MB virtual floppy disks in QEMU
+# (but they do in 86Box 4.2.1, which is also much slower), and 320 kB floppy
+# disks are way too small for this build. See
+# https://retrocomputing.stackexchange.com/q/31008 for more details.
 #
-# To run the build, run this script from a GUI terminal emulator, and follow
-# the instructions. Eventually the QEMU window will appear, and follow
-# instruction there as well. The final output is the 86-DOS floppy image
-# file 86dos011_bydos.img.
+# A working set of 86Box 4.2.1 settings is:
+#
+# 1. In Tools / Settings / Machine: Machine type: [1997] Socket 7 (Dual
+#    Voltage)
+# 2. Machine: [i430VX] Shuttle HOT-557
+# 3. Tools / Settings / Floppy & CD-ROM drives: 5.25" 1.2 MB
+# 4. At boot, DEL / STANDARD CMOS SETUP / DRIVE A:: 1.2 M , 5.25 in.
+#
+# To run the build with QEMU, run this script from a GUI terminal emulator,
+# and follow the instructions. Eventually the QEMU window will appear, and
+# follow instruction there as well. The final output is the 86-DOS floppy
+# image file 86dos011_bydos.img.
 #
 set -ex
 test "$0" = "${0%/*}" || cd "${0%/*}"
