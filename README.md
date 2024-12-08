@@ -351,7 +351,7 @@ function](https://www.seasip.info/Cpm/bdos.html) on CP/M Z80 can be invoked
 by loading 9 to the C register, loading the address of a `$`-terminated
 string to DE, and calling to address 5 (the system call entry point). And on
 86-DOS 8086 (API designed by Tim Paterson) it can be invoked by loading 9 to
-the AH register, loading the address of a `$`-terminated string to DX, and
+the CL register, loading the address of a `$`-terminated string to DX, and
 calling to address 5.
 
 The DOS syscall API has been extended a lot since 1980 with function not
